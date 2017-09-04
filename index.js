@@ -11,8 +11,12 @@ let android = Platform.OS === 'android';
 let Picker = NativeModules.BEEPickerManager;
 
 export default {
+    triggeredByNode : {},
 
     init(options){
+        let self = this;
+        this.triggeredByNode = options.triggeredByNode;
+
         let opt = {
             isLoop: false,
             pickerConfirmBtnText: 'confirm',
@@ -45,18 +49,19 @@ export default {
         //there are no `removeListener` for NativeAppEventEmitter & DeviceEventEmitter
         this.listener && this.listener.remove();
         this.listener = NativeAppEventEmitter.addListener('pickerEvent', event => {
+            event['triggeredByNode'] = self.triggeredByNode;
             EventEmitter.emit("onPicker"+event['type'], event);
             fnConf[event['type']](event['selectedValue'], event['selectedIndex']);
         });
     },
 
     show(){
-        EventEmitter.emit("pickerWillShow", true);
+        EventEmitter.emit("pickerWillShow", {triggeredByNode: this.triggeredByNode});
         Picker.show();
     },
 
     hide(){
-        EventEmitter.emit("pickerWillHide", true);
+        EventEmitter.emit("pickerWillHide", {triggeredByNode: this.triggeredByNode});
         Picker.hide();
     },
 
