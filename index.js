@@ -4,6 +4,8 @@ import {
     NativeAppEventEmitter
 } from 'react-native';
 
+import EventEmitter from "react-native-eventemitter";
+
 let ios = Platform.OS === 'ios';
 let android = Platform.OS === 'android';
 let Picker = NativeModules.BEEPickerManager;
@@ -48,10 +50,12 @@ export default {
     },
 
     show(){
+        EventEmitter.emit("pickerWillShow", "value");
         Picker.show();
     },
 
     hide(){
+        EventEmitter.emit("pickerWillHide", "value");
         Picker.hide();
     },
 
